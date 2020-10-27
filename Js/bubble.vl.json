@@ -1,132 +1,150 @@
 {
-  "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
-  "width": 500,
-  "height": 400,
-  "title": "COVID-19 Cases per Country (13 Oct 2020)",
-  "data": {
-    "url": "https://raw.githubusercontent.com/cyr17/3179HW10/main/data/Population_cleaned.csv"
-  },
-  "params": [
-    {
-      "name": "Population_Above",
-      "value": 0,
-      "bind": {
-        "input": "range",
-        "min": 0,
-        "max": 1000000000,
-        "step": 1000000,
-        "name": "Minimum Population: "
-      }
-    },
-    {
-      "name": "Continent_selection",
-      "bind": {
-        "input": "select",
-        "options": [
-          null,
-          "North America",
-          "South America",
-          "Europe",
-          "Africa",
-          "Asia",
-          "Oceania"
-        ],
-        "labels": [
-          "Show All",
-          "North America",
-          "South America",
-          "Europe",
-          "Africa",
-          "Asia",
-          "Oceania"
-        ],
-        "name": "Continent Selection: "
-      }
-    }
-  ],
-  "transform": [
-    {"filter": "datum.Population > Population_Above"},
-    {
-      "filter": "Continent_selection == null || datum.Continent == Continent_selection"
-    }
-  ],
-  "encoding": {
-    "x": {"field": "Urban Pop", "type": "quantitative"},
-    "y": {"field": "Median Age", "type": "quantitative"}
-  },
-  "layer": [
-    {
-      "selection": {
-        "continent_highlight": {
-          "type": "multi",
-          "fields": ["Continent"],
-          "bind": "legend"
-        }
-      },
-      "mark": "circle",
-      "encoding": {
-        "size": {"field": "Population", "type": "quantitative"},
-        "color": {
-          "field": "Continent",
-          "type": "nominal",
-          "scale": {
-            "domain": [
-              "North America",
-              "South America",
-              "Europe",
-              "Africa",
-              "Asia",
-              "Oceania"
-            ],
-            "range": [
-              "#ff7f00",
-              "#984ea3",
-              "#e41a1c",
-              "#a6cee3",
-              "#377eb8",
-              "#a65628"
-            ]
-          }
-        },
-        "opacity": {
-          "condition": {"selection": "continent_highlight", "value": 0.6},
-          "value": 0.1
-        },
-        "tooltip": [
-          {"field": "Country", "type": "nominal"},
-          {"field": "Population", "type": "quantitative", "format": ","},
-          {"field": "Median Age", "type": "quantitative", "format": ","},
-          {"field": "Density", "type": "quantitative", "format": ","}
-        ]
-      }
-    },
-    {
-      "mark": {
-        "type": "text",
-        "align": "left",
-        "baseline": "line-bottom",
-        "dx": 12,
-        "fontSize": 10.5,
-        "fontStyle": "italic"
-      },
-      "encoding": {
-        "text": {"field": "Country", "type": "nominal"},
-        "color": {"value": "black"},
-        "opacity": {
-          "condition": {
-            "test": "datum['Country'] == 'China' || datum['Country'] =='India' || datum['Country'] == 'Australia' || datum['Country'] == 'France' || datum['Country'] == 'United Kingdom'",
-            "value": 1
-          },
-          "value": 0
-        },
-        "tooltip": [
-          {"field": "Country", "type": "nominal"},
-          {"field": "Population", "type": "quantitative", "format": ","},
-          {"field": "Median Age", "type": "quantitative", "format": ","},
-          {"field": "Density", "type": "quantitative", "format": ","}
-        ]
-      }
-    }
-  ],
-  "config": {}
+ "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+ "width": 500,
+ "height": 400,
+ "title": "COVID-19 Cases per Country (13 Oct 2020)",
+ "data": {
+ "url": "https://raw.githubusercontent.com/cyr17/3179HW10/main/data/Population_cleaned.csv"
+ },
+ "params": [
+ {
+ "name": "Population_Above",
+ "value": 0,
+ "bind": {
+ "input": "range",
+ "min": 0,
+ "max": 1000000000,
+ "step": 1000000,
+ "name": "Minimum Population: "
+ }
+ },
+ {
+ "name": "Continent_selection",
+ "bind": {
+ "input": "select",
+ "options": [
+ null,
+ "North America",
+ "South America",
+ "Europe",
+ "Africa",
+ "Asia",
+ "Oceania"
+ ],
+ "labels":[
+ "Show All",
+ "North America",
+ "South America",
+ "Europe",
+ "Africa",
+ "Asia",
+ "Oceania"
+ ],
+ "name": "Continent Selection: "
+ }
+ }
+ ],
+ "transform": [
+ {"filter": "datum.Population > Population_Above"},
+ {"filter": "Continent_selection == null || datum.Continent == Continent_selection"},
+ {
+  "calculate":"datum.Population/100000000",
+   "as":"Population in millions"
+ }
+ ],
+ 
+ "encoding": {
+ "x": {
+ "field": "Urban Pop",
+ "type": "quantitative",
+ "axis":{"tickCount":4}
+ },
+ "y": {
+ "field": "Median Age",
+ "type": "quantitative"
+ }
+ },
+ "layer":[
+  {
+ "selection": {
+ "continent_highlight": {
+ "type": "multi",
+ "fields": ["Continent"],
+ "bind": "legend"
+ }
+ },
+
+ "mark": "circle",
+ "encoding": {
+ "size": {
+ "field": "Population in millions",
+ "type": "quantitative",
+ "scale":{
+   "type": "threshold",
+   "domain":[1,5,10]
+ }
+ },
+ "color": {
+ "field": "Continent",
+ "type": "nominal",
+ "scale": {
+ "domain": [
+ "North America",
+ "South America",
+ "Europe",
+ "Africa",
+ "Asia",
+ "Oceania"
+ ],
+ "range": [
+ "#ff7f00",
+ "#984ea3",
+ "#e41a1c",
+ "#a6cee3",
+ "#377eb8",
+ "#a65628"
+ ]
+ }
+ },
+"opacity": {
+  "condition":{"selection":"continent_highlight","value":0.6},
+ "value": 0.1
+ },
+ 
+ "tooltip":[
+   {"field": "Country", "type": "nominal"},
+ {"field": "Population", "type": "quantitative", "format": ","},
+ {"field": "Median Age", "type": "quantitative", "format": ","},
+ {"field": "Density", "type": "quantitative", "format": ","}
+ ]
+ }
+},
+{
+ "mark": {
+ "type": "text",
+ "align": "left",
+ "baseline": "line-bottom",
+ "dx": 12,
+ "fontSize": 10.5,
+ "fontStyle": "italic"
+ },
+ "encoding": {
+ "text": {"field": "Country", "type": "nominal"},
+ "color": {"value": "black"},
+ "opacity": {
+ "condition": {
+ "test": "datum['Country'] == 'China' || datum['Country'] =='India' || datum['Country'] == 'Australia' || datum['Country'] == 'France' || datum['Country'] == 'United Kingdom'",
+ "value": 1
+ },
+ "value": 0
+ },
+ "tooltip":[
+   {"field": "Country", "type": "nominal"},
+ {"field": "Population", "type": "quantitative", "format": ","},
+ {"field": "Median Age", "type": "quantitative", "format": ","},
+ {"field": "Density", "type": "quantitative", "format": ","}
+ ]
+ }
+}
+]
 }
