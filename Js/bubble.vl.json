@@ -2,7 +2,7 @@
  "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
  "width": 500,
  "height": 400,
- "title": "COVID-19 Cases per Country (13 Oct 2020)",
+ "title": "Countries with promising Future",
  "data": {
  "url": "https://raw.githubusercontent.com/cyr17/3179HW10/main/data/Population_cleaned.csv"
  },
